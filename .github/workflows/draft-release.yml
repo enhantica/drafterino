@@ -1,0 +1,43 @@
+name: Update release draft
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - '**'
+
+jobs:
+  drafterino-notes:
+    permissions:
+      contents: write
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Drafts the next release notes
+        uses: enhantica/drafterino@main
+
+        with:
+          config: |
+            title: 'drafterino $COMPUTED_VERSION'
+            tag: 'v$COMPUTED_VERSION'
+            note-template: '- $PR_TITLE (#$PR_NUMBER)'
+
+            default-bump: post
+
+            major-bump-labels: ['[scope] significant']
+            minor-bump-labels: ['[scope] enhancement']
+            patch-bump-labels: ['[scope] bug', '[scope] maintenance']
+            post-bump-labels: ['[scope] documentation']
+
+            release-notes:
+              - title: 'Added'
+                labels: ['[scope] significant', '[scope] enhancement']
+              - title: 'Fixed'
+                labels: ['[scope] bug']
+              - title: 'Changed'
+                labels: ['[scope] maintenance', '[scope] documentation']
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
