@@ -63,57 +63,70 @@ def get_merged_prs() -> List[Dict[str, Any]]:
     Returns:
         list: List of merged pull request dictionaries.
     """
+    print('DEBUG: A')
     event_path = os.environ.get("GITHUB_EVENT_PATH")
     if not event_path or not os.path.isfile(event_path):
         print("⚠️ No event payload found, skipping PR lookup.")
         return []
 
+    print('DEBUG: B')
     with open(event_path, "r") as f:
         event = json.load(f)
 
+    print('DEBUG: C')
     repo = event.get("repository", {})
     owner = repo.get("owner", {}).get("login")
     repo_name = repo.get("name")
 
+    print('DEBUG: D')
     token = os.environ.get("GITHUB_TOKEN")
     if not (owner and repo_name and token):
         print("⚠️ Missing GitHub context for API call.")
         return []
 
     # Get the latest tag and corresponding merge commits since that tag
+    print('DEBUG: E')
     prev_tag = get_latest_tag()
 
     # Validate prev_tag and construct git log command safely
+    print('DEBUG: F')
     if not prev_tag or prev_tag == "0.0.0":
         # No valid previous tag, get all merge commits up to HEAD
         log_args = ["git", "log", "--merges", "--pretty=format:%H"]
     else:
         log_args = ["git", "log", f"{prev_tag}..HEAD", "--merges", "--pretty=format:%H"]
 
+    print('DEBUG: G')
     try:
         merge_shas = subprocess.check_output(log_args, text=True).splitlines()
     except subprocess.CalledProcessError as e:
         print(f"⚠️ Failed to run git log: {e}")
         return []
 
+    print('DEBUG: H')
     if not merge_shas:
         print("⚠️ No merge commits found since latest tag.")
         return []
 
+    print('DEBUG: I')
     url = f"https://api.github.com/repos/{owner}/{repo_name}/pulls?state=closed&sort=updated&direction=desc&per_page=100"
     headers = {"Authorization": f"Bearer {token}"}
     response = requests.get(url, headers=headers)
     if response.status_code != 200:
         raise Exception(f"Failed to fetch PRs: {response.status_code} {response.text}")
 
+    print('DEBUG: J')
     all_merged_prs = [pr for pr in response.json() if pr.get("merged_at")]
 
+    print('DEBUG: K')
     recent_merged_prs = [pr for pr in all_merged_prs if pr.get("merge_commit_sha") in merge_shas]
 
+    print('DEBUG: L')
     print("🧾 PRs merged after the latest tag:")
     for pr in recent_merged_prs:
         print(f" - {pr.get('title')} (#{pr.get('number')}) - SHA: {pr.get('merge_commit_sha')}")
 
+    print('DEBUG: M')
     return recent_merged_prs
 
 
