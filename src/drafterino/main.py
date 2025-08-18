@@ -82,14 +82,7 @@ def get_merged_prs() -> List[Dict[str, Any]]:
 
     # Get the latest tag and corresponding merge commits since that tag
     prev_tag = get_latest_tag()
-    try:
-        tag_date_str = os.popen(f"git log -1 --format=%cI {prev_tag}").read().strip()
-        tag_date = tag_date_str if tag_date_str else None
-    except Exception as e:
-        print(f"⚠️ Failed to get date of previous tag: {e}")
-        tag_date = None
 
-    log_cmd = f"git log {prev_tag}..HEAD --merges --pretty=format:%H"
     # Validate prev_tag and construct git log command safely
     if not prev_tag or prev_tag == "0.0.0":
         # No valid previous tag, get all merge commits up to HEAD
@@ -114,16 +107,11 @@ def get_merged_prs() -> List[Dict[str, Any]]:
 
     all_merged_prs = [pr for pr in response.json() if pr.get("merged_at")]
 
-    if tag_date:
-        recent_merged_prs = [
-            pr for pr in all_merged_prs
-            if pr.get("merged_at") and pr["merged_at"] > tag_date
-        ]
-    else:
-        recent_merged_prs = all_merged_prs
+    recent_merged_prs = [pr for pr in all_merged_prs if pr.get("merge_commit_sha") in merge_shas]
 
-    # SHA-based filtering commented out as timestamp filtering supersedes it
-    # recent_merged_prs = [pr for pr in all_merged_prs if pr.get("merge_commit_sha") in merge_shas]
+    print("🧾 PRs merged after the latest tag:")
+    for pr in recent_merged_prs:
+        print(f" - {pr.get('title')} (#{pr.get('number')}) - SHA: {pr.get('merge_commit_sha')}")
 
     return recent_merged_prs
 
