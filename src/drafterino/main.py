@@ -82,7 +82,17 @@ def get_merged_prs() -> List[Dict[str, Any]]:
     # Get the latest tag and corresponding merge commits since that tag
     prev_tag = get_latest_tag()
     log_cmd = f"git log {prev_tag}..HEAD --merges --pretty=format:%H"
-    merge_shas = os.popen(log_cmd).read().splitlines()
+    # Validate prev_tag and construct git log command safely
+    if not prev_tag or prev_tag == "0.0.0":
+        # No valid previous tag, get all merge commits up to HEAD
+        log_args = ["git", "log", "--merges", "--pretty=format:%H"]
+    else:
+        log_args = ["git", "log", f"{prev_tag}..HEAD", "--merges", "--pretty=format:%H"]
+    try:
+        merge_shas = subprocess.check_output(log_args, text=True).splitlines()
+    except subprocess.CalledProcessError as e:
+        print(f"⚠️ Failed to run git log: {e}")
+        return []
 
     if not merge_shas:
         print("⚠️ No merge commits found since latest tag.")
