@@ -41,7 +41,7 @@ def get_latest_tag() -> str:
     Get the latest valid SemVer-compatible git tag in the repository.
 
     Returns:
-        str: Latest valid SemVer tag string, or "0.0.0" if none found.
+        str: Latest valid SemVer tag string with leading 'v', or "0.0.0" if none found.
     """
     tags = os.popen("git tag --sort=-creatordate").read().splitlines()
     for tag in tags:
@@ -89,6 +89,7 @@ def get_merged_prs() -> List[Dict[str, Any]]:
         log_args = ["git", "log", "--merges", "--pretty=format:%H"]
     else:
         log_args = ["git", "log", f"{prev_tag}..HEAD", "--merges", "--pretty=format:%H"]
+
     try:
         merge_shas = subprocess.check_output(log_args, text=True).splitlines()
     except subprocess.CalledProcessError as e:
