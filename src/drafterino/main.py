@@ -57,7 +57,7 @@ def get_latest_tag() -> str:
 
 def get_merged_prs() -> List[Dict[str, Any]]:
     """
-    Retrieve merged pull requests from the GitHub API based on event context.
+    Retrieve merged pull requests from the GitHub API that were merged after the latest tag.
 
     Returns:
         list: List of merged pull request dictionaries.
@@ -79,13 +79,35 @@ def get_merged_prs() -> List[Dict[str, Any]]:
         print("⚠️ Missing GitHub context for API call.")
         return []
 
-    url = f"https://api.github.com/repos/{owner}/{repo_name}/pulls?state=closed&sort=updated&direction=desc&per_page=50"
+    # Get the latest tag and corresponding merge commits since that tag
+    prev_tag = get_latest_tag()
+    log_cmd = f"git log {prev_tag}..HEAD --merges --pretty=format:%H"
+    # Validate prev_tag and construct git log command safely
+    if not prev_tag or prev_tag == "0.0.0":
+        # No valid previous tag, get all merge commits up to HEAD
+        log_args = ["git", "log", "--merges", "--pretty=format:%H"]
+    else:
+        log_args = ["git", "log", f"{prev_tag}..HEAD", "--merges", "--pretty=format:%H"]
+    try:
+        merge_shas = subprocess.check_output(log_args, text=True).splitlines()
+    except subprocess.CalledProcessError as e:
+        print(f"⚠️ Failed to run git log: {e}")
+        return []
+
+    if not merge_shas:
+        print("⚠️ No merge commits found since latest tag.")
+        return []
+
+    url = f"https://api.github.com/repos/{owner}/{repo_name}/pulls?state=closed&sort=updated&direction=desc&per_page=100"
     headers = {"Authorization": f"Bearer {token}"}
     response = requests.get(url, headers=headers)
     if response.status_code != 200:
         raise Exception(f"Failed to fetch PRs: {response.status_code} {response.text}")
 
-    return [pr for pr in response.json() if pr.get("merged_at")]
+    all_merged_prs = [pr for pr in response.json() if pr.get("merged_at")]
+    recent_merged_prs = [pr for pr in all_merged_prs if pr.get("merge_commit_sha") in merge_shas]
+
+    return recent_merged_prs
 
 
 def determine_bump(prs: List[Dict[str, Any]],
