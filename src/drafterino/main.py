@@ -58,7 +58,8 @@ def get_latest_tag() -> str:
 
 def get_merged_prs() -> List[Dict[str, Any]]:
     """
-    Retrieve merged pull requests from the GitHub API that were merged after the latest tag.
+    Retrieve merged pull requests from the GitHub API that introduced commits
+    after the latest tag, across all branches (not just merge commits).
 
     Returns:
         list: List of merged pull request dictionaries.
@@ -80,41 +81,41 @@ def get_merged_prs() -> List[Dict[str, Any]]:
         print("⚠️ Missing GitHub context for API call.")
         return []
 
-    # Get the latest tag and corresponding merge commits since that tag
     prev_tag = get_latest_tag()
-
-    # Validate prev_tag and construct git log command safely
     if not prev_tag or prev_tag == "0.0.0":
-        # No valid previous tag, get all merge commits up to HEAD
-        log_args = ["git", "log", "--merges", "--pretty=format:%H"]
+        log_args = ["git", "log", "--pretty=format:%H"]
     else:
-        log_args = ["git", "log", f"{prev_tag}..HEAD", "--merges", "--pretty=format:%H"]
+        log_args = ["git", "log", f"{prev_tag}..HEAD", "--pretty=format:%H"]
 
     try:
-        merge_shas = subprocess.check_output(log_args, text=True).splitlines()
+        commit_shas = subprocess.check_output(log_args, text=True).splitlines()
     except subprocess.CalledProcessError as e:
         print(f"⚠️ Failed to run git log: {e}")
         return []
 
-    if not merge_shas:
-        print("⚠️ No merge commits found since latest tag.")
-        return []
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/vnd.github.groot-preview+json"
+    }
 
-    url = f"https://api.github.com/repos/{owner}/{repo_name}/pulls?state=closed&sort=updated&direction=desc&per_page=100"
-    headers = {"Authorization": f"Bearer {token}"}
-    response = requests.get(url, headers=headers)
-    if response.status_code != 200:
-        raise Exception(f"Failed to fetch PRs: {response.status_code} {response.text}")
+    seen_prs = {}
+    for sha in commit_shas:
+        url = f"https://api.github.com/repos/{owner}/{repo_name}/commits/{sha}/pulls"
+        response = requests.get(url, headers=headers)
+        if response.status_code != 200:
+            print(f"⚠️ Failed to fetch PRs for commit {sha}: {response.status_code}")
+            continue
+        for pr in response.json():
+            if pr.get("merged_at"):
+                seen_prs[pr["number"]] = pr
 
-    all_merged_prs = [pr for pr in response.json() if pr.get("merged_at")]
+    merged_prs = list(seen_prs.values())
 
-    recent_merged_prs = [pr for pr in all_merged_prs if pr.get("merge_commit_sha") in merge_shas]
-
-    print("🧾 PRs merged after the latest tag:")
-    for pr in recent_merged_prs:
+    print("🧾 PRs merged after the latest tag (all branches):")
+    for pr in merged_prs:
         print(f" - {pr.get('title')} (#{pr.get('number')}) - SHA: {pr.get('merge_commit_sha')}")
 
-    return recent_merged_prs
+    return merged_prs
 
 
 def determine_bump(prs: List[Dict[str, Any]],
