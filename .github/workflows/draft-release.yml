@@ -46,8 +46,8 @@ jobs:
                 labels: ['[scope] bug']
               - title: 'Changed'
                 labels: ['[scope] maintenance', '[scope] documentation']
-            env:
-              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create GitHub draft release
         uses: softprops/action-gh-release@v2
