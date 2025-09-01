@@ -1,12 +1,9 @@
 #!/usr/bin/env node
 const fs = require('fs');
-const path = require('path');
 const core = require('@actions/core');
-const github = require('@actions/github');
 const yaml = require('js-yaml');
 const semver = require('semver');
 const { execSync } = require('child_process');
-const fetch = require('node-fetch');
 
 function getLatestTag() {
   try {
