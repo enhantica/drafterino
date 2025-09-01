@@ -34368,7 +34368,7 @@ const { execSync } = __nccwpck_require__(5317);
 
 function getLatestTag() {
   try {
-    const tags = execSync('git tag --sort=-creatordate', { encoding: 'utf-8' }).trim().split('\n');
+    const tags = execSync('git tag --merged', { encoding: 'utf-8' }).trim().split('\n');
     for (const tag of tags) {
       const cleaned = tag.replace(/^v/, '').split('.post')[0];
       if (semver.valid(cleaned)) return tag;
