@@ -54,7 +54,7 @@ jobs:
             LICENSE
             LICENSE.zip
             README.zip
-            tests.zip
+            ${{ github.workspace }}/tests.zip
 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
