@@ -7,7 +7,7 @@ const { execSync } = require('child_process');
 
 function getLatestTag() {
   try {
-    const tags = execSync('git tag --merged HEAD --sort=-creatordate', { encoding: 'utf-8' })
+    const tags = execSync('git tag --sort=-creatordate', { encoding: 'utf-8' })
       .trim()
       .split('\n');
     for (const tag of tags) {
