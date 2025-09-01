@@ -32,9 +32,8 @@ runs:
       shell: bash
       env:
         CONFIG: ${{ inputs.config }}
+        FILES: ${{ inputs.files }}
         GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
-      with:
-        files: ${{ inputs.files }}
 
     - name: Create GitHub draft release
       uses: softprops/action-gh-release@v2

@@ -282,7 +282,9 @@ def run_release_workflow(cfg: Dict[str, Any]) -> None:
     release_notes = generate_release_notes(prs, cfg)
     print("📝 Generated release notes:\n", release_notes)
 
-    uploaded_files = cfg.get("files", [])
+    files_env = os.environ.get("FILES", "")
+    uploaded_files = files_env.strip().splitlines() if files_env.strip() else []
+
     if uploaded_files:
         print("📁 Files to upload:")
         for fpath in uploaded_files:
