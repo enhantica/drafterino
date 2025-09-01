@@ -7,7 +7,10 @@ const { execSync } = require('child_process');
 
 function getLatestTag() {
   try {
-    const tags = execSync('git tag --merged', { encoding: 'utf-8' }).trim().split('\n');
+    const tags = execSync('git tag --merged HEAD --sort=-creatordate', { encoding: 'utf-8' })
+      .trim()
+      .split('\n');
+    console.log('🔖 Reachable tags:\n', tags.join('\n'));
     for (const tag of tags) {
       const cleaned = tag.replace(/^v/, '').split('.post')[0];
       if (semver.valid(cleaned)) return tag;
