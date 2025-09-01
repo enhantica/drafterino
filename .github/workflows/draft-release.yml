@@ -24,8 +24,8 @@ jobs:
         run: zip -r README.zip README.md
 
       - name: Drafts the next release notes
+        id: draft
         uses: enhantica/drafterino@develop
-
         with:
           config: |
             title: 'drafterino $COMPUTED_VERSION'
@@ -46,8 +46,17 @@ jobs:
                 labels: ['[scope] bug']
               - title: 'Changed'
                 labels: ['[scope] maintenance', '[scope] documentation']
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create GitHub draft release
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          tag_name: ${{ steps.draft.outputs.tag_name }}
+          name: ${{ steps.draft.outputs.release_name }}
+          body: ${{ steps.draft.outputs.release_notes }}
           files: |
             README.zip
-
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
