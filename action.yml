@@ -5,6 +5,9 @@ inputs:
   config:
     description: "YAML configuration string defining title, tag, bump rules, and release notes grouping"
     required: true
+  files:
+    description: "Optional list of file paths to upload to the draft release"
+    required: false
 
 runs:
   using: "composite"
@@ -29,14 +32,16 @@ runs:
       shell: bash
       env:
         CONFIG: ${{ inputs.config }}
+        FILES: ${{ inputs.files }}
         GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
 
     - name: Create GitHub draft release
       uses: softprops/action-gh-release@v2
       with:
+        draft: true
         tag_name: ${{ steps.draft.outputs.tag_name }}
         name: ${{ steps.draft.outputs.release_name }}
         body: ${{ steps.draft.outputs.release_notes }}
-        draft: true
+        files: ${{ steps.draft.outputs.files }}
       env:
         GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}

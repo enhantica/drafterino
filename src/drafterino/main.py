@@ -282,12 +282,25 @@ def run_release_workflow(cfg: Dict[str, Any]) -> None:
     release_notes = generate_release_notes(prs, cfg)
     print("📝 Generated release notes:\n", release_notes)
 
+    files_env = os.environ.get("FILES", "")
+    uploaded_files = files_env.strip().splitlines() if files_env.strip() else []
+
+    if uploaded_files:
+        print("📁 Files to upload:")
+        for fpath in uploaded_files:
+            print(f" - {fpath}")
+
     output_file = os.environ.get("GITHUB_OUTPUT", "/dev/null")
     with open(output_file, "a") as f:
         f.write(f"version={new_version}\n")
         f.write(f"tag_name={cfg.get('tag')}\n")
         f.write(f"release_name={cfg.get('title')}\n")
         f.write(f"release_notes<<EOF\n{release_notes}\nEOF\n")
+        if uploaded_files:
+            f.write("files<<EOF\n")
+            for file_path in uploaded_files:
+                f.write(f"{file_path}\n")
+            f.write("EOF\n")
 
 
 def main() -> None:
