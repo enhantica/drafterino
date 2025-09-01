@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - master
+      - develop
 
 jobs:
   drafterino-notes:
@@ -37,6 +38,8 @@ jobs:
                 labels: ['[scope] bug']
               - title: 'Changed'
                 labels: ['[scope] maintenance', '[scope] documentation']
+          files: |
+            LICENSE
 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
