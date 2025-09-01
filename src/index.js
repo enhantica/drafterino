@@ -80,7 +80,7 @@ function determineBump(prs, cfg) {
     post:  cfg['post-bump-labels'] || [],
   };
 
-  console.log('🧪 Bump label groups from config:', groups);
+  //console.log('🧪 Bump label groups from config:', groups);
   const found = Object.fromEntries(Object.keys(groups).map(k => [k, false]));
 
   prs.forEach(pr => {
@@ -158,16 +158,16 @@ async function run() {
     if (!rawConfig) throw new Error('CONFIG input not provided');
     const cfg = yaml.load(rawConfig);
 
-    console.log('🔧 Loaded config:\n', yaml.dump(cfg));
+    //console.log('🔧 Loaded config:\n', yaml.dump(cfg));
 
-    const tags = execSync('git tag --merged HEAD --sort=-creatordate', { encoding: 'utf-8' })
-      .trim()
-      .split('\n');
-    console.log('🔖 Reachable tags:\n', tags.join('\n'));
-    const branch = execSync('git rev-parse --abbrev-ref HEAD', { encoding: 'utf-8' }).trim();
-    const sha = execSync('git rev-parse HEAD', { encoding: 'utf-8' }).trim();
-    console.log(`🔍 Current branch: ${branch}`);
-    console.log(`🔍 Current commit: ${sha}`);
+    //const tags = execSync('git tag --merged HEAD --sort=-creatordate', { encoding: 'utf-8' })
+    //  .trim()
+    //  .split('\n');
+    //console.log('🔖 Reachable tags:\n', tags.join('\n'));
+    //const branch = execSync('git rev-parse --abbrev-ref HEAD', { encoding: 'utf-8' }).trim();
+    //const sha = execSync('git rev-parse HEAD', { encoding: 'utf-8' }).trim();
+    //console.log(`🔍 Current branch: ${branch}`);
+    //console.log(`🔍 Current commit: ${sha}`);
 
     const prev = getLatestTag();
     console.log('🔖 Latest tag:', prev);
@@ -191,7 +191,7 @@ async function run() {
       if (!fs.existsSync(f)) {
         console.warn(`⚠️ File not found: ${f}`);
       } else {
-        console.log(`📄 Found file: ${f}`);
+        //console.log(`📄 Found file: ${f}`);
       }
     });
 
