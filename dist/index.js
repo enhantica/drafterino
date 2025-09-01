@@ -34428,7 +34428,8 @@ function getMergedPRs(token) {
     const mergedPRs = Object.values(seenPRs);
     console.log('🧾 PRs merged after the latest tag (all branches):');
     mergedPRs.forEach(pr =>
-      console.log(` - ${pr.title} (#${pr.number}) - SHA: ${pr.merge_commit_sha}`));
+      //console.log(` - ${pr.title} (#${pr.number}) - SHA: ${pr.merge_commit_sha}`));
+      console.log(` - ${pr.title} (#${pr.number})`));
     return mergedPRs;
   });
 }
