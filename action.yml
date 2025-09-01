@@ -5,9 +5,6 @@ inputs:
   config:
     description: "YAML configuration string defining title, tag, bump rules, and release notes grouping"
     required: true
-  files:
-    description: "Optional list of file paths to upload to the draft release"
-    required: false
 
 runs:
   using: "node20"

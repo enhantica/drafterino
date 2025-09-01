@@ -34514,7 +34514,7 @@ async function run() {
     console.log('🔧 Starting release preparation...');
 
     const rawConfig = core.getInput('config');
-    const rawFiles = core.getInput('files') || '';
+    //const rawFiles = core.getInput('files') || '';
     const token = process.env.GITHUB_TOKEN;
 
     if (!rawConfig) throw new Error('CONFIG input not provided');
@@ -34548,25 +34548,25 @@ async function run() {
     const notes = generateNotes(prs, cfg);
     console.log('📝 Generated release notes:\n', notes);
 
-    const files = rawFiles.split('\n').map(f => f.trim()).filter(Boolean);
-    files.forEach(f => {
-      if (!fs.existsSync(f)) {
-        console.warn(`⚠️ File not found: ${f}`);
-      } else {
-        //console.log(`📄 Found file: ${f}`);
-      }
-    });
+    //const files = rawFiles.split('\n').map(f => f.trim()).filter(Boolean);
+    //files.forEach(f => {
+    //  if (!fs.existsSync(f)) {
+    //    console.warn(`⚠️ File not found: ${f}`);
+    //  } else {
+    //    console.log(`📄 Found file: ${f}`);
+    //  }
+    //});
 
-    if (files.length) {
-      console.log('📁 Files to upload:');
-      files.forEach(f => console.log(` - ${f}`));
-    }
+    //if (files.length) {
+    //  console.log('📁 Files to upload:');
+    //  files.forEach(f => console.log(` - ${f}`));
+   // }
 
     core.setOutput('version', version);
     core.setOutput('tag_name', cfg.tag);
     core.setOutput('release_name', cfg.title);
     core.setOutput('release_notes', notes);
-    core.setOutput('files', files.join('\n'));
+    //core.setOutput('files', files.join('\n'));
   } catch (err) {
     core.setFailed(`❌ ${err.message}`);
   }
