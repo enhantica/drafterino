@@ -7,9 +7,6 @@ on:
       - master
       - develop
 
-env:
-  CI_BRANCH: ${{ github.head_ref || github.ref_name }}
-
 jobs:
   drafterino-notes:
     permissions:
@@ -18,8 +15,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Drafts the next release notes
-        uses: enhantica/drafterino@${{ env.CI_BRANCH }}
+      - name: Drafts the next release notes using ${{ github.head_ref || github.ref_name }} branch
+        uses: enhantica/drafterino@${{ github.head_ref || github.ref_name }}
 
         with:
           config: |
