@@ -16,15 +16,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
-          fetch-depth: 0
-
-      - name: Zip the README.md
-        run: zip -r README.zip README.md
+          fetch-depth: 0 # full history with tags to get the version number by drafterino
 
       - name: Drafts the next release notes
-        id: draft
+        id: drafterino
         uses: enhantica/drafterino@develop
         with:
           config: |
@@ -53,10 +50,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           draft: true
-          tag_name: ${{ steps.draft.outputs.tag_name }}
-          name: ${{ steps.draft.outputs.release_name }}
-          body: ${{ steps.draft.outputs.release_notes }}
-          files: |
-            README.zip
+          tag_name: ${{ steps.drafterino.outputs.tag_name }}
+          name: ${{ steps.drafterino.outputs.release_name }}
+          body: ${{ steps.drafterino.outputs.release_notes }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
