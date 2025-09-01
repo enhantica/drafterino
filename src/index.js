@@ -91,6 +91,8 @@ function determineBump(prs, cfg) {
     }
   });
 
+  console.log('🔍 Bump decision flags:', found);
+
   if (found.major) return 'major';
   if (found.minor) return 'minor';
   if (found.patch) return 'patch';
@@ -148,6 +150,8 @@ function generateNotes(prs, cfg) {
 
 async function run() {
   try {
+    console.log('🔧 Starting release preparation...');
+
     const rawConfig = core.getInput('config');
     const rawFiles = core.getInput('files') || '';
     const token = process.env.GITHUB_TOKEN;
@@ -156,6 +160,11 @@ async function run() {
     const cfg = yaml.load(rawConfig);
 
     console.log('🔧 Loaded config:\n', yaml.dump(cfg));
+
+    const tags = execSync('git tag --merged HEAD --sort=-creatordate', { encoding: 'utf-8' })
+      .trim()
+      .split('\n');
+    console.log('🔖 Reachable tags:\n', tags.join('\n'));
 
     const prev = getLatestTag();
     console.log('🔖 Latest tag:', prev);
@@ -182,6 +191,11 @@ async function run() {
         console.log(`📄 Found file: ${f}`);
       }
     });
+
+    if (files.length) {
+      console.log('📁 Files to upload:');
+      files.forEach(f => console.log(` - ${f}`));
+    }
 
     core.setOutput('version', version);
     core.setOutput('tag_name', cfg.tag);
