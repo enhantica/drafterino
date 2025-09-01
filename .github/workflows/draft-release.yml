@@ -15,8 +15,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Drafts the next release notes using ${{ github.head_ref || github.ref_name }} branch
-        uses: enhantica/drafterino@${{ github.head_ref || github.ref_name }}
+      - name: Drafts the next release notes using
+        uses: enhantica/drafterino@develop
 
         with:
           config: |
