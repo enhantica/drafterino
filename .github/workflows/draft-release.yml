@@ -21,9 +21,6 @@ jobs:
       - name: Zip the README.md
         run: zip -r README.zip README.md
 
-      - name: Zip the tests directory
-        run: zip -r tests.zip tests
-
       - name: Create a dummy release.zip
         run: echo 'aaa' > release.zip
 
