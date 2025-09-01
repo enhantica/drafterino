@@ -34505,7 +34505,7 @@ function generateNotes(prs, cfg) {
   return sections.map(sec => {
     const entries = grouped[sec.title] || [];
     return entries.length ? `## ${sec.title}\n${entries.join('\n')}` : '';
-  }).filter(Boolean).join('\n\n') || '_No notable changes._';
+  }).filter(Boolean).join('\n\n') || '';
 }
 
 async function run() {
