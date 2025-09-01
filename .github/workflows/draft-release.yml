@@ -15,6 +15,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Zip the README.md
+        run: zip -r README.zip README.md
+
+      - name: Zip the tests directory
+        run: zip -r tests.zip tests
+
+      - name: Debug
+        run: ls -l
+
       - name: Drafts the next release notes
         uses: enhantica/drafterino@develop
 
@@ -38,6 +50,11 @@ jobs:
                 labels: ['[scope] bug']
               - title: 'Changed'
                 labels: ['[scope] maintenance', '[scope] documentation']
+          files: |
+            LICENSE
+            LICENSE.zip
+            README.zip
+            tests.zip
 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
