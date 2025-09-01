@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Drafts the next release notes
-        uses: enhantica/drafterino@main
+        uses: enhantica/drafterino@develop
 
         with:
           config: |
