@@ -26,10 +26,29 @@ runs:
       shell: bash
       run: pip install -r "${{ github.action_path }}/requirements.txt"
 
+
+    - name: action --- pwd
+      shell: bash
+      run: pwd
+
+    - name: action --- ls -la
+      shell: bash
+      run: ls -la
+
+    - name: action --- ls -la ${{ github.action_path }}
+      shell: bash
+      run: ls -la ${{ github.action_path }}
+
+    - name: action --- ls -la ${{ github.workspace }}
+      shell: bash
+      run: ls -la ${{ github.workspace }}
+
     - name: Run draft release script
       id: draft
-      run: python "${{ github.action_path }}/src/drafterino/main.py"
       shell: bash
+      #working-directory: ${{ github.workspace }}
+      run: |
+        python "${{ github.action_path }}/src/drafterino/main.py"
       env:
         CONFIG: ${{ inputs.config }}
         FILES: ${{ inputs.files }}

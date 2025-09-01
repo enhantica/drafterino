@@ -16,6 +16,11 @@ from typing import Dict
 from typing import List
 
 
+#workspace = os.environ.get("GITHUB_WORKSPACE", os.getcwd())
+#print(f"---------Using GITHUB_WORKSPACE: {workspace}")
+#os.chdir(workspace)
+
+
 def parse_config() -> Dict[str, Any]:
     """
     Parse the YAML configuration from the CONFIG environment variable.
@@ -308,8 +313,24 @@ def main() -> None:
     Entrypoint for running the release draft logic.
     """
     try:
-        cfg = parse_config()
-        run_release_workflow(cfg)
+        print("📂 Current directory (pwd) before change:")
+        subprocess.run(["pwd"], check=True)
+
+        workspace = os.environ.get("GITHUB_WORKSPACE")
+        if workspace:
+            print(f"📂 Changing to GITHUB_WORKSPACE: {workspace}")
+            os.chdir(workspace)
+
+        # Confirm again
+        print("📂 Current directory (pwd):")
+        subprocess.run(["pwd"], check=True)
+
+        print("📄 Listing files in current dir:")
+        subprocess.run(["ls", "-la"], check=True)
+
+
+        #cfg = parse_config()
+        #run_release_workflow(cfg)
     except Exception as e:
         print(f"❌ Error: {e}")
         sys.exit(1)
