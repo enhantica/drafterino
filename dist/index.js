@@ -34466,9 +34466,9 @@ function bumpVersion(prev, type) {
   if (!next) throw new Error(`Invalid previous version: ${prev}`);
 
   switch (type) {
-    case 'major': return next.inc('major');
-    case 'minor': return next.inc('minor');
-    case 'patch': return next.inc('patch');
+    case 'major': return next.inc('major').version;
+    case 'minor': return next.inc('minor').version;
+    case 'patch': return next.inc('patch').version;
     case 'post': {
       const match = prev.match(/\.post(\d+)/);
       const n = match ? parseInt(match[1]) + 1 : 1;
