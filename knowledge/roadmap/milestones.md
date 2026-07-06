@@ -18,7 +18,7 @@ ORG-0004) — its hardening has org-wide supply-chain leverage (audit R3).
 | D01-T02 | ⬜ | **Test suite + CI** around the version-bump and release-notes grouping logic (the SemVer computation every repo trusts must not silently regress; seed cases: `[scope]` map incl. `.postN`, mixed-label PRs, no-PR pushes) (AUD-03) |
 | D01-T03 | ⬜ | **package.json metadata**: `name`, `version`, `scripts` (`build`/`test`/`lint`) so standard tooling and scanners work (AUD-20) |
 | D01-T04 | ⬜ | **TS/JS lint lane** per ORG-0014: ESLint (strict) + format check, as npm scripts + CI job (AUD-03) |
-| D01-T05 | ⬜ | **Workflow + branch hygiene**: top-level `permissions: contents: read` in `draft-release.yml` (AUD-09); replace the `enhantica/drafterino@develop` self-reference with `@v2` and drop `master`/`develop` from triggers (AUD-05/06); **delete the live remote `develop` branch** + prune stale merged branches (`audit`, `node-24` if merged); SHA-pin third-party actions (AUD-07, ORG-0024) |
+| D01-T05 | 🟡 | **Workflow + branch hygiene** — *2026-07-06: `@develop` self-ref → `@v2`, `master`/`develop` triggers dropped, and the merged `develop`/`audit`/`node-24` branches deleted (all verified ancestor-merged; `delete_branch_on_merge` now on).* **Remaining:** top-level `permissions: contents: read` in `draft-release.yml` (AUD-09); SHA-pin third-party actions (AUD-07, ORG-0024) |
 
 ## D02 — Org-base compliance — ORG-T28
 
