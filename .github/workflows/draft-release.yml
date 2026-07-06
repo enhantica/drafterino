@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-      - master
-      - develop
 
 jobs:
   drafterino-notes:
@@ -22,7 +20,7 @@ jobs:
 
       - name: Drafts the next release notes
         id: drafterino
-        uses: enhantica/drafterino@develop
+        uses: enhantica/drafterino@v2
         with:
           config: |
             title: 'drafterino $COMPUTED_VERSION'
